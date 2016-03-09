@@ -3,13 +3,52 @@ from flask import Flask
 from werkzeug.exceptions import NotFound, ServiceUnavailable
 import json
 import requests
-
+from flask import render_template
 
 app = Flask(__name__)
+
+from opbeat.contrib.flask import Opbeat
+
+OPBEAT = {
+    'DEBUG': True
+        }
+
+opbeat = Opbeat(
+        app,
+        organization_id='7f7fa7744c924fe4adc32c676975d041',
+        app_id='e0cdcf4185',
+        secret_token='8739153bccd94d5a080231e27266a1547212431f',
+    )
 
 with open("{}/database/users.json".format(root_dir()), "r") as f:
     users = json.load(f)
 
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./test.db'
+db = SQLAlchemy(app)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True)
+    email = db.Column(db.String(120), unique=True)
+
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+        
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+
+    
+@app.route('/db')
+def load_db():
+    users = User.query.all()
+    return render_template('db.html',users=users)
 
 @app.route("/", methods=['GET'])
 def hello():
@@ -89,4 +128,4 @@ def user_suggested(username):
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=5000, debug=True, host='0.0.0.0')

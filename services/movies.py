@@ -35,7 +35,20 @@ def movie_info(movieid):
 def movie_record():
     return nice_json(movies)
 
+from opbeat.contrib.flask import Opbeat
+
+OPBEAT = {
+    'DEBUG': True
+        }
+
+
+opbeat = Opbeat(
+        app,
+        organization_id='7f7fa7744c924fe4adc32c676975d041',
+        app_id='e0cdcf4185',
+        secret_token='8739153bccd94d5a080231e27266a1547212431f',
+    )
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    app.run(port=5001, debug=True, host='0.0.0.0')
 

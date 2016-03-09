@@ -14,7 +14,8 @@ install: clean venv
 	. venv/bin/activate; python setup.py install
 	. venv/bin/activate; python setup.py develop
 
-launch: venv shutdown
+#launch: venv shutdown
+launch: venv
 	. venv/bin/activate; python  services/movies.py &
 	. venv/bin/activate; python  services/showtimes.py &
 	. venv/bin/activate; python  services/bookings.py &
